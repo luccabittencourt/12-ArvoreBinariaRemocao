@@ -83,7 +83,7 @@ void menu()
 void inicializar()
 {
 
-	// provisÛrio porque n„o libera a memoria usada pela arvore
+	// provis√≥rio porque n√£o libera a memoria usada pela arvore
 	raiz = NULL;
 
 	cout << "Arvore inicializada \n";
@@ -242,46 +242,60 @@ void removerElementoArvore(NO* no, int valor) {
 	NO* pai = NULL;
 	NO* atual = buscarElementoArvoreComPai(no, valor, pai);
 	if (atual == NULL) {
-		cout << "Elemento nao encontrado \n";
+		cout << "Elemento n√£o encontrado \n";
 		return;
 	}
 
-
-	// caso 1: sem filhos	
-	
-
-	// caso 2: um filho	
-	
-
-	// caso 3: dois filhos
-
-	// procura o elmento mais a esquerda da sub-arvore da direita
-	NO* sucessor = atual->dir;
-	NO* paiSucessor = atual;
-	while (sucessor->esq != NULL) {
-		paiSucessor = sucessor;
-		sucessor = sucessor->esq;
+	// Caso 1: Sem filhos
+	if (atual->esq == NULL && atual->dir == NULL) {
+		if (pai == NULL) {
+			raiz = NULL;
+		}
+		else {
+			if (pai->esq == atual) {
+				pai->esq = NULL;
+			}
+			else {
+				pai->dir = NULL;
+			}
+		}
+		free(atual);
 	}
-
-	// copia o valor do sucessor para o no atual
-	atual->valor = sucessor->valor;
-
-	// se existir uma sub-arvore a direita do sucessor , entao
-	// ela deve ser ligada ao pai do sucessor
-	if (sucessor->dir != NULL)
-	{
-		paiSucessor->esq = sucessor->dir;
+	// Caso 2: Um filho
+	else if ((atual->esq != NULL && atual->dir == NULL) || (atual->esq == NULL && atual->dir != NULL)) {
+		NO* filho = (atual->esq != NULL) ? atual->esq : atual->dir;
+		if (pai == NULL) {
+			raiz = filho;
+		}
+		else {
+			if (pai->esq == atual) {
+				pai->esq = filho;
+			}
+			else {
+				pai->dir = filho;
+			}
+		}
+		free(atual);
 	}
+	// Caso 3: Dois filhos
 	else {
-		paiSucessor->esq = NULL;
+		NO* sucessor = atual->dir;
+		NO* paiSucessor = atual;
+		while (sucessor->esq != NULL) {
+			paiSucessor = sucessor;
+			sucessor = sucessor->esq;
+		}
+
+		atual->valor = sucessor->valor;
+		if (paiSucessor->esq == sucessor) {
+			paiSucessor->esq = (sucessor->dir != NULL) ? sucessor->dir : NULL;
+		}
+		else {
+			paiSucessor->dir = (sucessor->dir != NULL) ? sucessor->dir : NULL;
+		}
+		free(sucessor);
 	}
-
-	//libera memoria
-	free(sucessor);
-
-
 }
-
 
 
 
